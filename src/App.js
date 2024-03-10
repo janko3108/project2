@@ -3,6 +3,8 @@ import './App.css';
 import About from './components/About';
 import Degrees from "./components/Degrees";
 import Employment from "./components/Employment";
+import Faculty from "./components/Faculty";
+import Contact from "./components/Contact";
 
 export default class App extends React.Component {
     render() {
