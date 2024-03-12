@@ -24,7 +24,7 @@ export default class About extends React.Component {
     }
 
     componentDidMount() {
-        axios.get('https://people.rit.edu/~dsbics/proxy/http://ist.rit.edu/api/about')
+        axios.get('https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/about')
             .then((response) => {
                 this.setState({ about: response.data, loaded: true });
             });

@@ -13,12 +13,13 @@ export default class App extends React.Component {
   render() {
     return (
       <div className='App'>
-        <ResponsiveNavbar /> {/* Use the responsive navbar component */}
+        <nav id="Navigation"> <ResponsiveNavbar /></nav>
         <section id='About'><About /></section>
         <section id='Degrees'><Degrees /></section>
         <section id='Employment'><Employment /></section>
         <section id='Faculty'><Faculty /></section>
         <section id='Contact'><Contact /></section>
+        <footer></footer>
       </div>
     );
   }
