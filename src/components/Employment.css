@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
+body {
+  font-family: 'Lato', sans-serif;
+  color: grey;
+}
+
+section {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100vh; /* Adjust as needed */
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%; /* Ensure table takes full width of section */
+  max-width: 800px; /* Adjust as needed */
+}
+
+th, td {
+  padding: 0.75em;
+  border: 1px solid lightgrey;
+}
+
+

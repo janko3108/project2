@@ -1,61 +1,141 @@
-/*
- * React comunity encourage you to import assets in JavaScript files instead of 
- * using the public folder. For example, see the sections on adding a stylesheet 
- * and adding images and fonts:
- * - https://create-react-app.dev/docs/adding-a-stylesheet
- * - https://create-react-app.dev/docs/adding-images-fonts-and-files
- * 
- * This mechanism provides a number of benefits:
- * - Scripts and stylesheets get minified and bundled together to avoid extra network requests.
- * - Missing files cause compilation errors instead of 404 errors for your users.
- * - Result filenames include content hashes so you don’t need to worry about browsers caching their old versions.
- */
 import React from "react";
-import axios from "axios";
-import loading from './gears.gif';
+import loading from "./gears.gif";
+import "./Degrees.css";
 
 export default class Degrees extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            about: {},
-            loaded: false
-        };
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      undergraduateDegrees: [],
+      graduateDegrees: [],
+      loadingDegrees: true,
+      currentPage: 1,
+      totalPages: 1,
+      selectedDegree: null, // To track the selected degree
+    };
+    this.dialogRef = React.createRef(); // Create a reference to the dialog element
+  }
+
+  componentDidMount() {
+    this.fetchUndergraduateDegrees(this.state.currentPage);
+    this.fetchGraduateDegrees();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.currentPage !== this.state.currentPage) {
+      this.fetchUndergraduateDegrees(this.state.currentPage);
     }
+  }
 
-    componentDidMount() {
-        axios.get('https://people.rit.edu/~dsbics/proxy/http://ist.rit.edu/api/about')
-            .then((response) => {
-                this.setState({ about: response.data, loaded: true });
-            });
+  fetchUndergraduateDegrees = async (page) => {
+    try {
+      const response = await fetch(
+        `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/undergraduate?page=${page}`
+      );
+      const data = await response.json();
+      // Get only the first 5 entries
+      const first5UndergraduateDegrees = data.undergraduate.slice(0, 5);
+      this.setState({
+        undergraduateDegrees: first5UndergraduateDegrees,
+        totalPages: data.total_pages,
+        loadingDegrees: false,
+      });
+    } catch (error) {
+      console.error("Error fetching undergraduate degrees:", error);
+      this.setState({ loadingDegrees: false });
     }
+  };
 
-    render() {
-        const { about, loaded } = this.state;
-        
-        let content;
-        if (!loaded) {
-            content = <div><img src={loading} alt="loading" /></div>;
+  fetchGraduateDegrees = async () => {
+    try {
+      const response = await fetch(
+        `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/graduate`
+      );
+      const data = await response.json();
+      const first3GraduateDegrees = data.graduate.slice(0, 3);
+      this.setState({
+        graduateDegrees: first3GraduateDegrees,
+        loadingDegrees: false,
+      });
+    } catch (error) {
+      console.error("Error fetching graduate degrees:", error);
+      this.setState({ loadingDegrees: false });
+    }
+  };
 
-        } else {
-            content = (
-                <div>
-                    <h3>{about.title}</h3>
-                    <p>{about.description}</p>
-                    <div className="aboutQuote">
-                        <p className="quote">"{about.quote}"</p>
-                        <p>--{about.quoteAuthor}</p>
-                    </div>
+  handlePageChange = (newPage) => {
+    this.setState({ currentPage: newPage });
+  };
+
+  handleReadFull = (degree) => {
+    this.setState({ selectedDegree: degree });
+    this.dialogRef.current.showModal(); // Open the dialog when a degree is selected
+  };
+
+  handleClose = () => {
+    this.setState({ selectedDegree: null });
+    this.dialogRef.current.close(); 
+  };
+
+  render() {
+    const { undergraduateDegrees, graduateDegrees, loadingDegrees, currentPage, totalPages, selectedDegree } = this.state;
+
+    return (
+      <div className="degrees-container">
+        <h1>Undergraduate Degrees</h1>
+        {loadingDegrees ? (
+          <div className="loading-container">
+            <img src={loading} alt="loading" />
+          </div>
+        ) : (
+          <>
+            <div className="card-category-1">
+              {undergraduateDegrees.map((degree, index) => (
+                <div key={index} className={`basic-card basic-card-${index % 4 === 0 ? 'aqua' : (index % 4 === 1 ? 'lips' : (index % 4 === 2 ? 'light' : 'dark'))}`}>
+                  <div className="card-content">
+                    <span className="card-title">{degree.title}</span>
+                    <p className="card-text">{degree.description}</p>
+                  </div>
+                  <div className="card-link">
+                    <button onClick={() => this.handleReadFull(degree)}>Read Full</button>
+                  </div>
                 </div>
-            )
-        }
-
-        return (
-            <div className="about">
-                <h1>iSchool @ RIT</h1>
-                {content}
+              ))}
             </div>
-        );
-    }
 
+            <h1>Graduate Degrees</h1>
+            <div className="card-category-1">
+              {graduateDegrees.map((degree, index) => (
+                <div key={index} className={`basic-card basic-card-${index % 4 === 0 ? 'aqua' : (index % 4 === 1 ? 'lips' : (index % 4 === 2 ? 'light' : 'dark'))}`}>
+                  <div className="card-content">
+                    <span className="card-title">{degree.title}</span>
+                    <p className="card-text">{degree.description}</p>
+                  </div>
+                  <div className="card-link">
+                    <button onClick={() => this.handleReadFull(degree)}>Read Full</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <dialog ref={this.dialogRef} id="dialog">
+              {selectedDegree && (
+                <>
+                  <h2>{selectedDegree.title} Concentrations</h2>
+                  <ul>
+                    {selectedDegree.concentrations.map((concentration, index) => (
+                      <li key={index}>{concentration}</li>
+                    ))}
+                  </ul>
+                  <button onClick={this.handleClose}>Close</button>
+                </>
+              )}
+            </dialog>
+          </>
+        )}
+      </div>
+    );
+  }
 }
+

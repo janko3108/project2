@@ -14,7 +14,7 @@ export default class App extends React.Component {
     return (
       <div className='App'>
         <nav id="Navigation"> <ResponsiveNavbar /></nav>
-        <section id='About'><About /></section>
+        <section id='About'><About /></section> 
         <section id='Degrees'><Degrees /></section>
         <section id='Employment'><Employment /></section>
         <section id='Faculty'><Faculty /></section>
