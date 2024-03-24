@@ -1,6 +1,28 @@
 import React from "react";
+import axios from 'axios'; // Import Axios
 import loading from "./gears.gif";
 import "./Degrees.css";
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}));
 
 export default class Degrees extends React.Component {
   
@@ -13,6 +35,7 @@ export default class Degrees extends React.Component {
       currentPage: 1,
       totalPages: 1,
       selectedDegree: null, // To track the selected degree
+      dialogOpen: false // Track if dialog is open
     };
     this.dialogRef = React.createRef(); // Create a reference to the dialog element
   }
@@ -30,10 +53,10 @@ export default class Degrees extends React.Component {
 
   fetchUndergraduateDegrees = async (page) => {
     try {
-      const response = await fetch(
-        `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/undergraduate?page=${page}`
+      const response = await axios.get(
+        `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/undergraduate`
       );
-      const data = await response.json();
+      const data = response.data;
       // Get only the first 5 entries
       const first5UndergraduateDegrees = data.undergraduate.slice(0, 5);
       this.setState({
@@ -49,10 +72,10 @@ export default class Degrees extends React.Component {
 
   fetchGraduateDegrees = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/graduate`
       );
-      const data = await response.json();
+      const data = response.data;
       const first3GraduateDegrees = data.graduate.slice(0, 3);
       this.setState({
         graduateDegrees: first3GraduateDegrees,
@@ -69,17 +92,15 @@ export default class Degrees extends React.Component {
   };
 
   handleReadFull = (degree) => {
-    this.setState({ selectedDegree: degree });
-    this.dialogRef.current.showModal(); // Open the dialog when a degree is selected
+    this.setState({ selectedDegree: degree, dialogOpen: true });
   };
 
   handleClose = () => {
-    this.setState({ selectedDegree: null });
-    this.dialogRef.current.close(); 
+    this.setState({ selectedDegree: null, dialogOpen: false });
   };
 
   render() {
-    const { undergraduateDegrees, graduateDegrees, loadingDegrees, currentPage, totalPages, selectedDegree } = this.state;
+    const { undergraduateDegrees, graduateDegrees, loadingDegrees, selectedDegree, dialogOpen } = this.state;
 
     return (
       <div className="degrees-container">
@@ -92,50 +113,75 @@ export default class Degrees extends React.Component {
           <>
             <div className="card-category-1">
               {undergraduateDegrees.map((degree, index) => (
-                <div key={index} className={`basic-card basic-card-${index % 4 === 0 ? 'aqua' : (index % 4 === 1 ? 'lips' : (index % 4 === 2 ? 'light' : 'dark'))}`}>
-                  <div className="card-content">
-                    <span className="card-title">{degree.title}</span>
-                    <p className="card-text">{degree.description}</p>
-                  </div>
-                  <div className="card-link">
-                    <button onClick={() => this.handleReadFull(degree)}>Read Full</button>
-                  </div>
-                </div>
+                <Card key={index} sx={{ minWidth: 275, mb: 2 }}>
+                  <CardContent>
+                    <Typography variant="h5" component="div">
+                      {degree.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {degree.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                  </CardActions>
+                </Card>
               ))}
             </div>
 
             <h1>Graduate Degrees</h1>
             <div className="card-category-1">
               {graduateDegrees.map((degree, index) => (
-                <div key={index} className={`basic-card basic-card-${index % 4 === 0 ? 'aqua' : (index % 4 === 1 ? 'lips' : (index % 4 === 2 ? 'light' : 'dark'))}`}>
-                  <div className="card-content">
-                    <span className="card-title">{degree.title}</span>
-                    <p className="card-text">{degree.description}</p>
-                  </div>
-                  <div className="card-link">
-                    <button onClick={() => this.handleReadFull(degree)}>Read Full</button>
-                  </div>
-                </div>
+                <Card key={index} sx={{ minWidth: 275, mb: 2 }}>
+                  <CardContent>
+                    <Typography variant="h5" component="div">
+                      {degree.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {degree.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                  </CardActions>
+                </Card>
               ))}
             </div>
             
-            <dialog ref={this.dialogRef} id="dialog">
-              {selectedDegree && (
-                <>
-                  <h2>{selectedDegree.title} Concentrations</h2>
-                  <ul>
-                    {selectedDegree.concentrations.map((concentration, index) => (
-                      <li key={index}>{concentration}</li>
-                    ))}
-                  </ul>
-                  <button onClick={this.handleClose}>Close</button>
-                </>
-              )}
-            </dialog>
+            <BootstrapDialog
+              onClose={this.handleClose}
+              aria-labelledby="customized-dialog-title"
+              open={dialogOpen}
+            >
+              <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+                {selectedDegree && selectedDegree.title} Concentrations
+              </DialogTitle>
+              <IconButton
+                aria-label="close"
+                onClick={this.handleClose}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+              <DialogContent dividers>
+                {selectedDegree && selectedDegree.concentrations.map((concentration, index) => (
+                  <Typography key={index} gutterBottom>{concentration}</Typography>
+                ))}
+              </DialogContent>
+              <DialogActions>
+                <Button autoFocus onClick={this.handleClose}>
+                  Close
+                </Button>
+              </DialogActions>
+            </BootstrapDialog>
           </>
         )}
       </div>
     );
   }
 }
-

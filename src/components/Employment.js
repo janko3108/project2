@@ -1,7 +1,15 @@
 import React from 'react';
+import axios from 'axios'; // Import Axios
 import './Employment.css';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
-export default class Employment extends React.Component {
+class Employment extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,6 +22,7 @@ export default class Employment extends React.Component {
       loadingEmployment: true,
       loadingCoop: true,
     };
+    this.entriesPerPage = 5; // Set the number of entries to display per page
   }
 
   componentDidMount() {
@@ -32,8 +41,8 @@ export default class Employment extends React.Component {
 
   fetchEmploymentData = async () => {
     try {
-      const response = await fetch("https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/employment/employmentTable");
-      const data = await response.json();
+      const response = await axios.get("https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/employment/employmentTable");
+      const data = response.data;
 
       if (data && data.employmentTable && data.employmentTable.professionalEmploymentInformation) {
         const employmentTableData = data.employmentTable.professionalEmploymentInformation;
@@ -53,9 +62,9 @@ export default class Employment extends React.Component {
 
   fetchCoopData = async () => {
     try {
-      const response = await fetch("https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/employment/coopTable/coopInformation");
-      const data = await response.json();
-  
+      const response = await axios.get("https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/employment/coopTable/coopInformation");
+      const data = response.data;
+
       if (data && data.coopInformation) {
         this.setState({ coopData: data.coopInformation, loadingCoop: false });
 
@@ -70,80 +79,6 @@ export default class Employment extends React.Component {
       this.setState({ loadingCoop: false });
     }
   };
-  
-  
-  
-
-  entriesPerPage = 5; // Set the number of entries to display per page
-
-  renderEmploymentTableHeading() {
-    const { employmentData } = this.state;
-
-    if (employmentData.length === 0) return null;
-
-    return (
-      <thead className="table-head">
-        <tr>
-          {Object.keys(employmentData[0]).map(key => (
-            <th key={key}>{key.toUpperCase()}</th>
-          ))}
-        </tr>
-      </thead>
-    );
-  }
-
-  renderEmploymentTableRows() {
-    const { employmentData, employmentCurrentPageNum } = this.state;
-    const startIndex = (employmentCurrentPageNum - 1) * this.entriesPerPage;
-    const endIndex = Math.min(startIndex + this.entriesPerPage, employmentData.length);
-  
-    return (
-      <tbody>
-        {employmentData.slice(startIndex, endIndex).map((entry, index) => (
-          <tr key={`${entry.employer}_${index}`}>
-            {Object.values(entry).map((value, index) => (
-              <td key={index}>{value}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    );
-  }
-
-  renderCoopTableHeading() {
-    const { coopData } = this.state;
-
-    if (coopData.length === 0) return null;
-
-    return (
-      <thead className="table-head">
-        <tr>
-          {Object.keys(coopData[0]).map(key => (
-            <th key={key}>{key.toUpperCase()}</th>
-          ))}
-        </tr>
-      </thead>
-    );
-  }
-
-  renderCoopTableRows() {
-    const { coopData, coopCurrentPageNum } = this.state;
-    const startIndex = (coopCurrentPageNum - 1) * this.entriesPerPage;
-    const endIndex = Math.min(startIndex + this.entriesPerPage, coopData.length);
-  
-    return (
-      <tbody>
-        {coopData.slice(startIndex, endIndex).map((entry, index) => (
-          <tr key={`${entry.employer}_${index}`}>
-            {Object.values(entry).map((value, index) => (
-              <td key={index}>{value}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    );
-  }
-  
 
   handleEmploymentPageChange = newPage => {
     this.setState({ employmentCurrentPageNum: newPage });
@@ -153,8 +88,39 @@ export default class Employment extends React.Component {
     this.setState({ coopCurrentPageNum: newPage });
   };
 
+  renderTableHeading = (data) => {
+    if (data.length === 0) return null;
+
+    return (
+      <TableHead className="table-head">
+        <TableRow>
+          {Object.keys(data[0]).map(key => (
+            <TableCell key={key}>{key.toUpperCase()}</TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
+    );
+  };
+
+  renderTableRows = (data, currentPageNum) => {
+    const startIndex = (currentPageNum - 1) * this.entriesPerPage;
+    const endIndex = Math.min(startIndex + this.entriesPerPage, data.length);
+
+    return (
+      <TableBody>
+        {data.slice(startIndex, endIndex).map((entry, index) => (
+          <TableRow key={`${entry.employer}_${index}`}>
+            {Object.values(entry).map((value, index) => (
+              <TableCell key={index}>{value}</TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    );
+  };
+
   render() {
-    const { employmentCurrentPageNum, employmentTotalPages, coopCurrentPageNum, coopTotalPages, loadingEmployment, loadingCoop } = this.state;
+    const { employmentData, coopData, employmentCurrentPageNum, employmentTotalPages, coopCurrentPageNum, coopTotalPages, loadingEmployment, loadingCoop } = this.state;
 
     return (
       <div>
@@ -163,10 +129,12 @@ export default class Employment extends React.Component {
           {loadingEmployment ? (
             <div>Loading employment data...</div>
           ) : (
-            <table>
-              {this.renderEmploymentTableHeading()}
-              {this.renderEmploymentTableRows()}
-            </table>
+            <TableContainer component={Paper}>
+              <Table>
+                {this.renderTableHeading(employmentData)}
+                {this.renderTableRows(employmentData, employmentCurrentPageNum)}
+              </Table>
+            </TableContainer>
           )}
 
           <div className="pagination">
@@ -185,10 +153,12 @@ export default class Employment extends React.Component {
           {loadingCoop ? (
             <div>Loading co-op data...</div>
           ) : (
-            <table>
-              {this.renderCoopTableHeading()}
-              {this.renderCoopTableRows()}
-            </table>
+            <TableContainer component={Paper}>
+              <Table>
+                {this.renderTableHeading(coopData)}
+                {this.renderTableRows(coopData, coopCurrentPageNum)}
+              </Table>
+            </TableContainer>
           )}
 
           <div className="pagination">
@@ -206,3 +176,4 @@ export default class Employment extends React.Component {
   }
 }
 
+export default Employment;

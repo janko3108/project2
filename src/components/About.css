@@ -1,0 +1,42 @@
+.about-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.about-box {
+  background-color: #ffffff;
+  padding: 4em;
+  border: .25em solid #191919;
+  text-align: justify;
+  transition: transform 0.5s ease-in-out;
+  width: 80%;
+  /* max-width: 35em; Set maximum width */
+}
+
+.about-content {
+  margin-top: 1em;
+}
+
+.about-quote {
+  margin-top: 1em;
+}
+
+.about-box:hover {
+  transform: scale(1.05);
+}
+
+/* Media queries for smaller screens */
+@media screen and (max-width: 768px) {
+  .about-box {
+    width: 90%; /* Adjust width for smaller screens */
+    padding: 2em; /* Adjust padding for smaller screens */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .about-box {
+    padding: 1em; /* Further adjust padding for even smaller screens */
+  }
+}

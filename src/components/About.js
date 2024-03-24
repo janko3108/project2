@@ -1,61 +1,63 @@
-/*
- * React comunity encourage you to import assets in JavaScript files instead of 
- * using the public folder. For example, see the sections on adding a stylesheet 
- * and adding images and fonts:
- * - https://create-react-app.dev/docs/adding-a-stylesheet
- * - https://create-react-app.dev/docs/adding-images-fonts-and-files
- * 
- * This mechanism provides a number of benefits:
- * - Scripts and stylesheets get minified and bundled together to avoid extra network requests.
- * - Missing files cause compilation errors instead of 404 errors for your users.
- * - Result filenames include content hashes so you don’t need to worry about browsers caching their old versions.
- */
 import React from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import gearsLoading from "./gears.gif";
 import axios from "axios";
-import loading from './gears.gif';
+import "./About.css";
 
 export default class About extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            about: {},
-            loaded: false
-        };
+  constructor(props) {
+    super(props);
+    this.state = {
+      about: {},
+      loaded: false,
+    };
+  }
+
+  componentDidMount() {
+    axios
+      .get("https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/about")
+      .then((response) => {
+        this.setState({ about: response.data, loaded: true });
+      });
+  }
+
+  render() {
+    const { about, loaded } = this.state;
+
+    let content;
+    if (!loaded) {
+      content = <img src={gearsLoading} alt="loading" className="loading-img" />;
+    } else {
+      content = (
+        <Box className="about-content">
+          <Typography variant="h3" gutterBottom>
+            {about.title}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            {about.description}
+          </Typography>
+          <div className="about-quote">
+            <Typography variant="body2" className="quote" gutterBottom>
+              "{about.quote}"
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              --{about.quoteAuthor}
+            </Typography>
+          </div>
+        </Box>
+      );
     }
 
-    componentDidMount() {
-        axios.get('https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/about')
-            .then((response) => {
-                this.setState({ about: response.data, loaded: true });
-            });
-    }
-
-    render() {
-        const { about, loaded } = this.state;
-        
-        let content;
-        if (!loaded) {
-            content = <div><img src={loading} alt="loading" /></div>;
-
-        } else {
-            content = (
-                <div>
-                    <h3>{about.title}</h3>
-                    <p>{about.description}</p>
-                    <div className="aboutQuote">
-                        <p className="quote">"{about.quote}"</p>
-                        <p>--{about.quoteAuthor}</p>
-                    </div>
-                </div>
-            )
-        }
-
-        return (
-            <div className="about">
-                <h1>iSchool @ RIT</h1>
-                {content}
-            </div>
-        );
-    }
-
+    return (
+      <Box className="about-container">
+        <Box className="about-box">
+          <Typography variant="h1" gutterBottom>
+            About
+          </Typography>
+          {content}
+        </Box>
+      </Box>
+    );
+  }
 }

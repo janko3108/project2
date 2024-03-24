@@ -1,61 +1,122 @@
-/*
- * React comunity encourage you to import assets in JavaScript files instead of 
- * using the public folder. For example, see the sections on adding a stylesheet 
- * and adding images and fonts:
- * - https://create-react-app.dev/docs/adding-a-stylesheet
- * - https://create-react-app.dev/docs/adding-images-fonts-and-files
- * 
- * This mechanism provides a number of benefits:
- * - Scripts and stylesheets get minified and bundled together to avoid extra network requests.
- * - Missing files cause compilation errors instead of 404 errors for your users.
- * - Result filenames include content hashes so you don’t need to worry about browsers caching their old versions.
- */
 import React from "react";
-import axios from "axios";
-import loading from './gears.gif';
+import axios from 'axios';
+import loading from "./gears.gif";
+import "./Faculty.css";
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
+import ListSubheader from '@mui/material/ListSubheader';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+import Typography from '@mui/material/Typography';
 
 export default class Faculty extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            about: {},
-            loaded: false
-        };
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      facultyMembers: [],
+      loadingFaculty: true,
+      selectedMember: null,
+    };
+  }
+
+  componentDidMount() {
+    this.fetchFacultyMembers();
+  }
+
+  fetchFacultyMembers = async () => {
+    try {
+      const response = await axios.get(
+        `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/people/faculty`
+      );
+      const data = response.data;
+      const first12FacultyMembers = data.faculty.slice(0, 18);
+      this.setState({
+        facultyMembers: first12FacultyMembers,
+        loadingFaculty: false,
+      });
+    } catch (error) {
+      console.error("Error fetching faculty members:", error);
+      this.setState({ loadingFaculty: false });
     }
+  };
 
-    componentDidMount() {
-        axios.get('https://people.rit.edu/~dsbics/proxy/http://ist.rit.edu/api/about')
-            .then((response) => {
-                this.setState({ about: response.data, loaded: true });
-            });
-    }
+  handleReadMore = (member) => {
+    this.setState({ selectedMember: member });
+  };
 
-    render() {
-        const { about, loaded } = this.state;
-        
-        let content;
-        if (!loaded) {
-            content = <div><img src={loading} alt="loading" /></div>;
+  handleClose = () => {
+    this.setState({ selectedMember: null });
+  };
 
-        } else {
-            content = (
-                <div>
-                    <h3>{about.title}</h3>
-                    <p>{about.description}</p>
-                    <div className="aboutQuote">
-                        <p className="quote">"{about.quote}"</p>
-                        <p>--{about.quoteAuthor}</p>
-                    </div>
-                </div>
-            )
-        }
+  render() {
+    const { facultyMembers, loadingFaculty, selectedMember } = this.state;
 
-        return (
-            <div className="about">
-                <h1>iSchool @ RIT</h1>
-                {content}
-            </div>
-        );
-    }
+    return (
+      <div className="faculty-container">
+        <h1>Faculty Members</h1>
+        {loadingFaculty ? (
+          <div className="loading-container">
+            <img src={loading} alt="loading" />
+          </div>
+        ) : (
+          <ImageList sx={{ width: 500, height: 450 }}>
+            <ImageListItem key="Subheader" cols={2}>
+              <ListSubheader component="div">Faculty Members</ListSubheader>
+            </ImageListItem>
+            {facultyMembers.map((member, index) => (
+              <ImageListItem key={index}>
+                <img
+                  src={member.imagePath}
+                  alt={member.name}
+                  loading="lazy"
+                />
+                <ImageListItemBar
+                  title={member.name}
+                  subtitle={member.title}
+                  actionIcon={
+                    <IconButton
+                      sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                      aria-label={`info about ${member.name}`}
+                      onClick={() => this.handleReadMore(member)}
+                    >
+                      <InfoIcon />
+                    </IconButton>
+                  }
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        )}
 
+        <Dialog open={selectedMember !== null} onClose={this.handleClose}>
+          <DialogTitle>{selectedMember && selectedMember.name}</DialogTitle>
+          <DialogContent>
+            {selectedMember && (
+              <>
+                <Typography gutterBottom>Title: {selectedMember.title}</Typography>
+                <Typography gutterBottom>Interest Area: {selectedMember.interestArea}</Typography>
+                <Typography gutterBottom>Office: {selectedMember.office}</Typography>
+                <Typography gutterBottom>Website: {selectedMember.website}</Typography>
+                <Typography gutterBottom>Phone: {selectedMember.phone}</Typography>
+                <Typography gutterBottom>Email: {selectedMember.email}</Typography>
+              </>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} autoFocus>
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
+  }
 }
