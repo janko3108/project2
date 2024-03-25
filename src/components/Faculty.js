@@ -73,7 +73,7 @@ export default class Faculty extends React.Component {
 
     return (
       <div className="faculty-container">
-        <h1>Faculty Members</h1>
+        <h1 className="styledHeader">Faculty Members</h1>
         {loadingFaculty ? (
           <div className="loading-container">
             <img src={loading} alt="loading" />
@@ -81,7 +81,7 @@ export default class Faculty extends React.Component {
         ) : (
           <>
             <ImageList
-              sx={{ width: '100%', height: isMobile ? 800 : 600 }} 
+              sx={{ width: '100%', height: isMobile ? 700 : 600 }} 
               cols={isMobile ? 2 : 4} 
               rowHeight={isMobile ? 200 : 300} 
               gap={20}

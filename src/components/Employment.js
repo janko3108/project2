@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios'; // Import Axios
+import axios from 'axios';
 import './Employment.css';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -21,9 +21,9 @@ class Employment extends React.Component {
       coopTotalPages: 0,
       loadingEmployment: true,
       loadingCoop: true,
-      isMobile: window.innerWidth <= 768 
+      isMobile: window.innerWidth <= 768
     };
-    this.entriesPerPage = 5; // Set the number of entries to display per page
+    this.entriesPerPage = 5;
   }
 
   componentDidMount() {
@@ -58,7 +58,6 @@ class Employment extends React.Component {
         const employmentTableData = data.employmentTable.professionalEmploymentInformation;
         this.setState({ employmentData: employmentTableData, loadingEmployment: false });
 
-        // Calculate total pages based on the length of the data array
         const total = Math.ceil(employmentTableData.length / this.entriesPerPage);
         this.setState({ employmentTotalPages: total });
       } else {
@@ -78,7 +77,6 @@ class Employment extends React.Component {
       if (data && data.coopInformation) {
         this.setState({ coopData: data.coopInformation, loadingCoop: false });
 
-        // Calculate total pages based on the length of the data array
         const total = Math.ceil(data.coopInformation.length / this.entriesPerPage);
         this.setState({ coopTotalPages: total });
       } else {
@@ -134,19 +132,20 @@ class Employment extends React.Component {
 
     return (
       <div>
-        <div className={`employment-table-container${isMobile ? ' mobile' : ''}`}>
+        <div className="employment-table-container">
           <h2 className='header'>Professional Employment Information</h2>
-          {loadingEmployment ? (
-            <div>Loading employment data...</div>
-          ) : (
-            <TableContainer component={Paper}>
-              <Table>
-                {this.renderTableHeading(employmentData)}
-                {this.renderTableRows(employmentData, employmentCurrentPageNum)}
-              </Table>
-            </TableContainer>
-          )}
-
+          <div style={{ marginLeft: isMobile ? '10px' : '0', marginRight: isMobile ? '10px' : '0' }}>
+            {loadingEmployment ? (
+              <div>Loading employment data...</div>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table size={isMobile ? 'small' : 'medium'}>
+                  {this.renderTableHeading(employmentData)}
+                  {this.renderTableRows(employmentData, employmentCurrentPageNum)}
+                </Table>
+              </TableContainer>
+            )}
+          </div>
           <div className="pagination">
             <button disabled={employmentCurrentPageNum === 1} onClick={() => this.handleEmploymentPageChange(employmentCurrentPageNum - 1)}>
               Prev
@@ -158,19 +157,20 @@ class Employment extends React.Component {
           </div>
         </div>
 
-        <div className={`coop-table-container${isMobile ? ' mobile' : ''}`}>
+        <div className="coop-table-container">
           <h2 className='header'>Co-op Table</h2>
-          {loadingCoop ? (
-            <div>Loading co-op data...</div>
-          ) : (
-            <TableContainer component={Paper}>
-              <Table>
-                {this.renderTableHeading(coopData)}
-                {this.renderTableRows(coopData, coopCurrentPageNum)}
-              </Table>
-            </TableContainer>
-          )}
-
+          <div style={{ marginLeft: isMobile ? '10px' : '0', marginRight: isMobile ? '10px' : '0' }}>
+            {loadingCoop ? (
+              <div>Loading co-op data...</div>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table size={isMobile ? 'small' : 'medium'}>
+                  {this.renderTableHeading(coopData)}
+                  {this.renderTableRows(coopData, coopCurrentPageNum)}
+                </Table>
+              </TableContainer>
+            )}
+          </div>
           <div className="pagination">
             <button disabled={coopCurrentPageNum === 1} onClick={() => this.handleCoopPageChange(coopCurrentPageNum - 1)}>
               Prev

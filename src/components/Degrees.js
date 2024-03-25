@@ -11,8 +11,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -25,9 +23,20 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const LimitedCardContent = styled(CardContent)({
-  maxHeight: 150, // Adjust this value as needed
-  overflow: 'auto', // Add scroll bar if content exceeds maxHeight
+  height: '150px', // Adjust the height as needed
+  overflow: 'auto', // Add scroll bar if content exceeds the fixed height
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: 'center',
 });
+
+const SmallTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.60rem', // Adjust the font size for mobile view
+  },
+}));
 
 export default class Degrees extends React.Component {
 
@@ -107,77 +116,83 @@ export default class Degrees extends React.Component {
     const { undergraduateDegrees, graduateDegrees, loadingDegrees, selectedDegree, dialogOpen } = this.state;
 
     return (
-      <div>
-        <h1>Undergraduate Degrees</h1>
+      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ flexGrow: 1 }}>
         {loadingDegrees ? (
-          <div>
-            <img src={loading} alt="loading" />
-          </div>
+          <Grid item xs={12}>
+            <div>
+              <img src={loading} alt="loading" />
+            </div>
+          </Grid>
         ) : (
           <>
-            <Grid container spacing={2}>
-              {undergraduateDegrees.map((degree, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card>
-                    <LimitedCardContent>
-                      <Typography variant="h5" component="div">
-                        {degree.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {degree.description}
-                      </Typography>
-                    </LimitedCardContent>
-                    <CardActions>
-                      <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
+            {/* Header */}
+            <Grid item xs={12} sx={{ textAlign: 'center', backgroundColor: '#ffffff', padding: '20px' }}>
+              <Typography variant="h4" color="black" fontWeight="bold">Degrees</Typography>
+              
             </Grid>
 
-            <h1>Graduate Degrees</h1>
-            <Grid container spacing={2}>
-              {graduateDegrees.map((degree, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card>
-                    <LimitedCardContent>
-                      <Typography variant="h5" component="div">
-                        {degree.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {degree.description}
-                      </Typography>
-                    </LimitedCardContent>
-                    <CardActions>
-                      <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+            {/* Undergraduate Degrees */}
+            {undergraduateDegrees.map((degree, index) => (
+              <Grid item xs={2} sm={4} md={4} key={index}>
+                <Card>
+                  <LimitedCardContent>
+                    <Typography variant="h6" component="div">
+                      {degree.title}
+                    </Typography>
+                    <SmallTypography variant="body2" color="text.secondary">
+                      {degree.description}
+                    </SmallTypography>
+                  </LimitedCardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
 
-            <BootstrapDialog
-              onClose={this.handleClose}
-              aria-labelledby="customized-dialog-title"
-              open={dialogOpen}
-            >
-              <DialogTitle id="customized-dialog-title">
-                {selectedDegree && selectedDegree.title} Concentrations
-              </DialogTitle>
-              <DialogContent>
-                {selectedDegree && selectedDegree.concentrations.map((concentration, index) => (
-                  <Typography key={index} gutterBottom>{concentration}</Typography>
-                ))}
-              </DialogContent>
-              <DialogActions>
-                <Button autoFocus onClick={this.handleClose}>
-                  Close
-                </Button>
-              </DialogActions>
-            </BootstrapDialog>
+            {/* Graduate Degrees */}
+            {graduateDegrees.map((degree, index) => (
+              <Grid item xs={2} sm={4} md={4} key={index}>
+                <Card>
+                  <LimitedCardContent>
+                    <Typography variant="h6" component="div">
+                      {degree.title}
+                    </Typography>
+                    <SmallTypography variant="body2" color="text.secondary">
+                      {degree.description}
+                    </SmallTypography>
+                  </LimitedCardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
           </>
         )}
-      </div>
+
+        {/* Dialog */}
+        <BootstrapDialog
+          onClose={this.handleClose}
+          aria-labelledby="customized-dialog-title"
+          open={dialogOpen}
+        >
+          <DialogTitle id="customized-dialog-title">
+            {selectedDegree && selectedDegree.title} Concentrations
+          </DialogTitle>
+          <DialogContent>
+            {selectedDegree && selectedDegree.concentrations.map((concentration, index) => (
+              <Typography key={index} gutterBottom>{concentration}</Typography>
+            ))}
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={this.handleClose}>
+              Close
+            </Button>
+          </DialogActions>
+        </BootstrapDialog>
+      </Grid>
     );
   }
 }
+

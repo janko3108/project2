@@ -1,3 +1,5 @@
+// App.js
+
 import React from "react";
 import './App.css';
 import About from './components/About';
@@ -7,6 +9,7 @@ import Faculty from "./components/Faculty";
 import Navbar from './components/Navbar'; // Import the new component
 import Header from './components/Header'; // Import the Header component
 import Footer from "./components/Footer";
+import BackToTopButton from "./components/BackToTopButton"; // Import the BackToTopButton component
 
 export default class App extends React.Component {
   render() {
@@ -18,7 +21,8 @@ export default class App extends React.Component {
         <section id='Degrees'><Degrees /></section>
         <section id='Employment'><Employment /></section>
         <section id='Faculty'><Faculty /></section>
-        <footer id="Footer"> <Footer /> </footer>
+
+        <footer id="Contact"> <Footer /> </footer><BackToTopButton />
       </div >
     );
   }
