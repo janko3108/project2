@@ -1,6 +1,6 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import React from 'react';
-import './Footer.css'; // Assuming you store the CSS styles in a separate file named Footer.css
+import './Footer.css'; 
 
 class Footer extends React.Component {
     render() {

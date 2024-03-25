@@ -86,7 +86,6 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  /* Align cards in the center */
 }
 
 .basic-card {
@@ -117,11 +116,8 @@ body {
 
 .basic-card img {
   width: 100%;
-  /* Make the image fill the entire card width */
   height: 150px;
-  /* Fixed height for the images */
   object-fit: cover;
-  /* Ensure the image covers the entire space */
 }
 
 .basic-card .card-link {

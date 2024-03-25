@@ -17,7 +17,7 @@ class ProgressBar extends Component {
   handleScroll = () => {
     const windowHeight = window.innerHeight;
     const scrollHeight = document.documentElement.scrollHeight - windowHeight;
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const progress = (scrollTop / scrollHeight) * 100;
     this.setState({ scrollProgress: progress });
   };

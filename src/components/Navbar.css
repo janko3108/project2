@@ -42,7 +42,6 @@ nav {
 .nav-links {
   display: flex;
   justify-content: space-around;
-  /* width: 35%; */
   padding-left: 44.5em;
 }
 
@@ -69,7 +68,7 @@ nav {
 }
 
 .nav-links a:hover {
-  color: #F76902;
+  color: #000000;
   transform-origin: left;
   transition: color 0.3s ease-in-out;
 }
@@ -136,7 +135,6 @@ body.nav-open {
 }
 
 
-/* Media Query for Medium Screens */
 @media screen and (min-width: 769px) and (max-width: 1400px) {
   .logo-img {
     width: 20%;
@@ -157,7 +155,6 @@ body.nav-open {
   .nav-links a:hover,
   .nav-links a:focus {
     color: #F76902;
-    /* or the default color */
   }
 
   .nav-links a:hover::after,
@@ -273,4 +270,3 @@ body.nav-open {
 .toggle .line3 {
   transform: rotate(35deg) translate(-5px, -6px);
 }
-

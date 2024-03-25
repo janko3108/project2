@@ -40,7 +40,7 @@ class Employment extends React.Component {
     this.setState({ isMobile: window.innerWidth <= 768 });
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevState) {
     if (prevState.employmentCurrentPageNum !== this.state.employmentCurrentPageNum) {
       this.fetchEmploymentData();
     }

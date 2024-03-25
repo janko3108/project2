@@ -1,4 +1,4 @@
-// App.js
+
 
 import React from "react";
 import './App.css';
@@ -6,10 +6,10 @@ import About from './components/About';
 import Degrees from "./components/Degrees";
 import Employment from "./components/Employment";
 import Faculty from "./components/Faculty";
-import Navbar from './components/Navbar'; // Import the new component
-import Header from './components/Header'; // Import the Header component
+import Navbar from './components/Navbar'; 
+import Header from './components/Header'; 
 import Footer from "./components/Footer";
-import BackToTopButton from "./components/BackToTopButton"; // Import the BackToTopButton component
+import BackToTopButton from "./components/BackToTopButton"; 
 
 export default class App extends React.Component {
   render() {
@@ -21,8 +21,8 @@ export default class App extends React.Component {
         <section id='Degrees'><Degrees /></section>
         <section id='Employment'><Employment /></section>
         <section id='Faculty'><Faculty /></section>
-
-        <footer id="Contact"> <Footer /> </footer><BackToTopButton />
+        <footer id="Contact"> <Footer /> </footer>
+        <BackToTopButton />
       </div >
     );
   }

@@ -5,7 +5,6 @@ import "./Faculty.css";
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
-import ListSubheader from '@mui/material/ListSubheader';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 import Dialog from '@mui/material/Dialog';
@@ -13,7 +12,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 
 export default class Faculty extends React.Component {

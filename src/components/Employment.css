@@ -8,19 +8,14 @@ body {
 section {
   display: flex;
   justify-content: center;
-  /* Center horizontally */
   align-items: center;
-  /* Center vertically */
   height: 100vh;
-  /* Adjust as needed */
 }
 
 table {
   border-collapse: collapse;
   width: 100%;
-  /* Ensure table takes full width of section */
   max-width: 800px;
-  /* Adjust as needed */
 }
 
 th,
@@ -49,11 +44,9 @@ span {
   color: white;
 }
 
-/* Add this media query */
 @media screen and (max-width: 768px) {
   .header {
     margin-bottom: 0;
-    /* Set margin-bottom to 0 on small screens */
   }
 }
 

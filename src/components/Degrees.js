@@ -23,8 +23,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const LimitedCardContent = styled(CardContent)({
-  height: '150px', // Adjust the height as needed
-  overflow: 'auto', // Add scroll bar if content exceeds the fixed height
+  height: '150px', 
+  overflow: 'auto', 
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -34,7 +34,7 @@ const LimitedCardContent = styled(CardContent)({
 
 const SmallTypography = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
-    fontSize: '0.60rem', // Adjust the font size for mobile view
+    fontSize: '0.60rem', 
   },
 }));
 
@@ -65,7 +65,7 @@ export default class Degrees extends React.Component {
     }
   }
 
-  fetchUndergraduateDegrees = async (page) => {
+  fetchUndergraduateDegrees = async () => {
     try {
       const response = await axios.get(
         `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/undergraduate`
@@ -125,13 +125,12 @@ export default class Degrees extends React.Component {
           </Grid>
         ) : (
           <>
-            {/* Header */}
             <Grid item xs={12} sx={{ textAlign: 'center', backgroundColor: '#ffffff', padding: '20px' }}>
               <Typography variant="h4" color="black" fontWeight="bold">Degrees</Typography>
               
             </Grid>
 
-            {/* Undergraduate Degrees */}
+            
             {undergraduateDegrees.map((degree, index) => (
               <Grid item xs={2} sm={4} md={4} key={index}>
                 <Card>
@@ -150,7 +149,6 @@ export default class Degrees extends React.Component {
               </Grid>
             ))}
 
-            {/* Graduate Degrees */}
             {graduateDegrees.map((degree, index) => (
               <Grid item xs={2} sm={4} md={4} key={index}>
                 <Card>
@@ -171,7 +169,6 @@ export default class Degrees extends React.Component {
           </>
         )}
 
-        {/* Dialog */}
         <BootstrapDialog
           onClose={this.handleClose}
           aria-labelledby="customized-dialog-title"

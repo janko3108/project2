@@ -1,6 +1,6 @@
 import React from 'react';
 import './Navbar.css';
-import ProgressBar from './ProgressBar'; // Import your ProgressBar component
+import ProgressBar from './ProgressBar'; 
 
 class Navbar extends React.Component {
   componentDidMount() {
@@ -17,7 +17,6 @@ class Navbar extends React.Component {
       link.removeEventListener('click', this.handleLinkClick);
     });
   
-    // Also remove the 'nav-open' class and reset overflow style
     document.body.classList.remove('nav-open');
     document.documentElement.style.overflow = 'auto';
   }
@@ -27,10 +26,8 @@ class Navbar extends React.Component {
     const navLinks = document.querySelectorAll('.nav-links li');
     const burger = document.querySelector('.burger');
   
-    // Toggle Nav
     nav.classList.toggle('nav-active');
   
-    // Animate Links
     navLinks.forEach((link, index) => {
       if (link.style.animation) {
         link.style.animation = '';
@@ -39,17 +36,13 @@ class Navbar extends React.Component {
       }
     });
   
-    // Burger animation
     burger.classList.toggle('toggle');
   
-    // Toggle body class to disable scrolling only on mobile
-    if (window.innerWidth <= 768) { // Adjust the width threshold as needed
+    if (window.innerWidth <= 768) { 
       document.body.classList.toggle('nav-open');
       if (document.body.classList.contains('nav-open')) {
-        // Disable scrolling when menu is opened
         document.documentElement.style.overflow = 'hidden';
       } else {
-        // Enable scrolling when menu is closed
         document.documentElement.style.overflow = 'auto';
       }
     }
@@ -57,7 +50,6 @@ class Navbar extends React.Component {
 
 
   handleLinkClick = () => {
-    // Close the burger menu when a link is clicked
     this.handleBurgerClick();
   };
 
@@ -75,7 +67,7 @@ class Navbar extends React.Component {
   render() {
     return (
       <div>
-        <ProgressBar /> {/* Include your ProgressBar component */}
+        <ProgressBar /> 
         <div className="App">
           <nav>
             <div className="logo">
