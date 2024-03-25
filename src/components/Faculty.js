@@ -17,18 +17,30 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 
 export default class Faculty extends React.Component {
-  
+
   constructor(props) {
     super(props);
     this.state = {
       facultyMembers: [],
       loadingFaculty: true,
       selectedMember: null,
+      isMobile: false
     };
   }
 
   componentDidMount() {
     this.fetchFacultyMembers();
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
+  handleResize = () => {
+    const isMobile = window.innerWidth < 600;
+    this.setState({ isMobile });
   }
 
   fetchFacultyMembers = async () => {
@@ -37,9 +49,9 @@ export default class Faculty extends React.Component {
         `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/people/faculty`
       );
       const data = response.data;
-      const first12FacultyMembers = data.faculty.slice(0, 18);
+      const first32FacultyMembers = data.faculty.slice(0, 32);
       this.setState({
-        facultyMembers: first12FacultyMembers,
+        facultyMembers: first32FacultyMembers,
         loadingFaculty: false,
       });
     } catch (error) {
@@ -57,7 +69,7 @@ export default class Faculty extends React.Component {
   };
 
   render() {
-    const { facultyMembers, loadingFaculty, selectedMember } = this.state;
+    const { facultyMembers, loadingFaculty, selectedMember, isMobile } = this.state;
 
     return (
       <div className="faculty-container">
@@ -67,33 +79,38 @@ export default class Faculty extends React.Component {
             <img src={loading} alt="loading" />
           </div>
         ) : (
-          <ImageList sx={{ width: 500, height: 450 }}>
-            <ImageListItem key="Subheader" cols={2}>
-              <ListSubheader component="div">Faculty Members</ListSubheader>
-            </ImageListItem>
-            {facultyMembers.map((member, index) => (
-              <ImageListItem key={index}>
-                <img
-                  src={member.imagePath}
-                  alt={member.name}
-                  loading="lazy"
-                />
-                <ImageListItemBar
-                  title={member.name}
-                  subtitle={member.title}
-                  actionIcon={
-                    <IconButton
-                      sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                      aria-label={`info about ${member.name}`}
-                      onClick={() => this.handleReadMore(member)}
-                    >
-                      <InfoIcon />
-                    </IconButton>
-                  }
-                />
-              </ImageListItem>
-            ))}
-          </ImageList>
+          <>
+            <ImageList
+              sx={{ width: '100%', height: isMobile ? 800 : 600 }} 
+              cols={isMobile ? 2 : 4} 
+              rowHeight={isMobile ? 200 : 300} 
+              gap={20}
+            >
+              {facultyMembers.map((member, index) => (
+                <ImageListItem key={index}>
+                  <img
+                    src={member.imagePath}
+                    alt={member.name}
+                    loading="lazy"
+                    style={{ height: '100%', width: '100%', objectFit: 'cover' }} 
+                  />
+                  <ImageListItemBar
+                    title={member.name}
+                    subtitle={member.title}
+                    actionIcon={
+                      <IconButton
+                        sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                        aria-label={`info about ${member.name}`}
+                        onClick={() => this.handleReadMore(member)}
+                      >
+                        <InfoIcon />
+                      </IconButton>
+                    }
+                  />
+                </ImageListItem>
+              ))}
+            </ImageList>
+          </>
         )}
 
         <Dialog open={selectedMember !== null} onClose={this.handleClose}>

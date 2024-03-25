@@ -1,7 +1,6 @@
 import React from "react";
-import axios from 'axios'; // Import Axios
+import axios from 'axios';
 import loading from "./gears.gif";
-import "./Degrees.css";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
@@ -14,6 +13,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import Grid from '@mui/material/Grid';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -24,8 +24,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const LimitedCardContent = styled(CardContent)({
+  maxHeight: 150, // Adjust this value as needed
+  overflow: 'auto', // Add scroll bar if content exceeds maxHeight
+});
+
 export default class Degrees extends React.Component {
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -34,10 +39,10 @@ export default class Degrees extends React.Component {
       loadingDegrees: true,
       currentPage: 1,
       totalPages: 1,
-      selectedDegree: null, // To track the selected degree
-      dialogOpen: false // Track if dialog is open
+      selectedDegree: null,
+      dialogOpen: false
     };
-    this.dialogRef = React.createRef(); // Create a reference to the dialog element
+    this.dialogRef = React.createRef();
   }
 
   componentDidMount() {
@@ -57,7 +62,6 @@ export default class Degrees extends React.Component {
         `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/undergraduate`
       );
       const data = response.data;
-      // Get only the first 5 entries
       const first5UndergraduateDegrees = data.undergraduate.slice(0, 5);
       this.setState({
         undergraduateDegrees: first5UndergraduateDegrees,
@@ -103,72 +107,64 @@ export default class Degrees extends React.Component {
     const { undergraduateDegrees, graduateDegrees, loadingDegrees, selectedDegree, dialogOpen } = this.state;
 
     return (
-      <div className="degrees-container">
+      <div>
         <h1>Undergraduate Degrees</h1>
         {loadingDegrees ? (
-          <div className="loading-container">
+          <div>
             <img src={loading} alt="loading" />
           </div>
         ) : (
           <>
-            <div className="card-category-1">
+            <Grid container spacing={2}>
               {undergraduateDegrees.map((degree, index) => (
-                <Card key={index} sx={{ minWidth: 275, mb: 2 }}>
-                  <CardContent>
-                    <Typography variant="h5" component="div">
-                      {degree.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {degree.description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
-                  </CardActions>
-                </Card>
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card>
+                    <LimitedCardContent>
+                      <Typography variant="h5" component="div">
+                        {degree.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {degree.description}
+                      </Typography>
+                    </LimitedCardContent>
+                    <CardActions>
+                      <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
               ))}
-            </div>
+            </Grid>
 
             <h1>Graduate Degrees</h1>
-            <div className="card-category-1">
+            <Grid container spacing={2}>
               {graduateDegrees.map((degree, index) => (
-                <Card key={index} sx={{ minWidth: 275, mb: 2 }}>
-                  <CardContent>
-                    <Typography variant="h5" component="div">
-                      {degree.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {degree.description}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
-                  </CardActions>
-                </Card>
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card>
+                    <LimitedCardContent>
+                      <Typography variant="h5" component="div">
+                        {degree.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {degree.description}
+                      </Typography>
+                    </LimitedCardContent>
+                    <CardActions>
+                      <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
               ))}
-            </div>
-            
+            </Grid>
+
             <BootstrapDialog
               onClose={this.handleClose}
               aria-labelledby="customized-dialog-title"
               open={dialogOpen}
             >
-              <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+              <DialogTitle id="customized-dialog-title">
                 {selectedDegree && selectedDegree.title} Concentrations
               </DialogTitle>
-              <IconButton
-                aria-label="close"
-                onClick={this.handleClose}
-                sx={{
-                  position: 'absolute',
-                  right: 8,
-                  top: 8,
-                  color: (theme) => theme.palette.grey[500],
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-              <DialogContent dividers>
+              <DialogContent>
                 {selectedDegree && selectedDegree.concentrations.map((concentration, index) => (
                   <Typography key={index} gutterBottom>{concentration}</Typography>
                 ))}

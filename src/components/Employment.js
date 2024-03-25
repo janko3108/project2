@@ -21,6 +21,7 @@ class Employment extends React.Component {
       coopTotalPages: 0,
       loadingEmployment: true,
       loadingCoop: true,
+      isMobile: window.innerWidth <= 768 
     };
     this.entriesPerPage = 5; // Set the number of entries to display per page
   }
@@ -28,7 +29,16 @@ class Employment extends React.Component {
   componentDidMount() {
     this.fetchEmploymentData();
     this.fetchCoopData();
+    window.addEventListener("resize", this.handleWindowSizeChange);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleWindowSizeChange);
+  }
+
+  handleWindowSizeChange = () => {
+    this.setState({ isMobile: window.innerWidth <= 768 });
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.employmentCurrentPageNum !== this.state.employmentCurrentPageNum) {
@@ -120,12 +130,12 @@ class Employment extends React.Component {
   };
 
   render() {
-    const { employmentData, coopData, employmentCurrentPageNum, employmentTotalPages, coopCurrentPageNum, coopTotalPages, loadingEmployment, loadingCoop } = this.state;
+    const { employmentData, coopData, employmentCurrentPageNum, employmentTotalPages, coopCurrentPageNum, coopTotalPages, loadingEmployment, loadingCoop, isMobile } = this.state;
 
     return (
       <div>
-        <div className="employment-table-container">
-          <h2>Professional Employment Information</h2>
+        <div className={`employment-table-container${isMobile ? ' mobile' : ''}`}>
+          <h2 className='header'>Professional Employment Information</h2>
           {loadingEmployment ? (
             <div>Loading employment data...</div>
           ) : (
@@ -141,15 +151,15 @@ class Employment extends React.Component {
             <button disabled={employmentCurrentPageNum === 1} onClick={() => this.handleEmploymentPageChange(employmentCurrentPageNum - 1)}>
               Prev
             </button>
-            <span>Page {employmentCurrentPageNum} of {employmentTotalPages}</span>
+            <span className='margin'>Page {employmentCurrentPageNum} of {employmentTotalPages}</span>
             <button disabled={employmentCurrentPageNum === employmentTotalPages} onClick={() => this.handleEmploymentPageChange(employmentCurrentPageNum + 1)}>
               Next
             </button>
           </div>
         </div>
 
-        <div className="coop-table-container">
-          <h2>Co-op Table</h2>
+        <div className={`coop-table-container${isMobile ? ' mobile' : ''}`}>
+          <h2 className='header'>Co-op Table</h2>
           {loadingCoop ? (
             <div>Loading co-op data...</div>
           ) : (
@@ -165,7 +175,7 @@ class Employment extends React.Component {
             <button disabled={coopCurrentPageNum === 1} onClick={() => this.handleCoopPageChange(coopCurrentPageNum - 1)}>
               Prev
             </button>
-            <span>Page {coopCurrentPageNum} of {coopTotalPages}</span>
+            <span className='margin'>Page {coopCurrentPageNum} of {coopTotalPages}</span>
             <button disabled={coopCurrentPageNum === coopTotalPages} onClick={() => this.handleCoopPageChange(coopCurrentPageNum + 1)}>
               Next
             </button>
