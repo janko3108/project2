@@ -1,8 +1,12 @@
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import React from 'react';
-import './Footer.css'; 
-
-class Footer extends React.Component {
+/**
+ * Footer component that displays the footer section of the webpage.
+ * @component
+ */
+export default class Footer extends React.Component {
+    /**
+     * Renders the Footer component.
+     * @returns {JSX.Element} The JSX element representing the Footer component.
+     */
     render() {
         return (
             <footer>
@@ -12,7 +16,6 @@ class Footer extends React.Component {
                         <a href="https://www.instagram.com/rit_croatia/" target='_blank'><i className="fab fa-instagram"></i></a>
                         <a href="https://www.youtube.com/channel/UC37ArmUsdasXOeY5lylV_8g" target='_blank'><i className="fab fa-youtube"></i></a>
                         <a href="https://twitter.com/ritcroatia" target='_blank'><i className="fab fa-twitter"></i></a>
-
                     </div>
 
                     <div className="row">
@@ -33,5 +36,3 @@ class Footer extends React.Component {
         );
     }
 }
-
-export default Footer;

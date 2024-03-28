@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import './App.css';
 import About from './components/About';
@@ -11,6 +9,11 @@ import Header from './components/Header';
 import Footer from "./components/Footer";
 import BackToTopButton from "./components/BackToTopButton"; 
 
+/**
+ * App component is the root component of the application.
+ * It renders the main layout of the application including navigation, header, sections, footer, and back-to-top button.
+ * @returns {JSX.Element} App component.
+ */
 export default class App extends React.Component {
   render() {
     return (

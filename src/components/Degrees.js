@@ -13,6 +13,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Grid from '@mui/material/Grid';
 
+/**
+ * Styled dialog component with customized styles.
+ * @type {import('@mui/material').StyledComponent<typeof Dialog>}
+ */
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -22,9 +26,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+/**
+ * Styled card content component with limited height and overflow.
+ * @type {import('@mui/material').StyledComponent<typeof CardContent>}
+ */
 const LimitedCardContent = styled(CardContent)({
-  height: '150px', 
-  overflow: 'auto', 
+  height: '150px',
+  overflow: 'auto',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -32,91 +40,99 @@ const LimitedCardContent = styled(CardContent)({
   textAlign: 'center',
 });
 
+/**
+ * Styled typography component with reduced font size for small screens.
+ * @type {import('@mui/material').StyledComponent<typeof Typography>}
+ */
 const SmallTypography = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
-    fontSize: '0.60rem', 
+    fontSize: '0.60rem',
   },
 }));
 
+/**
+ * Class component representing the Degrees section of the application.
+ * @extends React.Component
+ */
 export default class Degrees extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       undergraduateDegrees: [],
       graduateDegrees: [],
       loadingDegrees: true,
-      currentPage: 1,
-      totalPages: 1,
       selectedDegree: null,
       dialogOpen: false
     };
+    /**
+     * Reference to the dialog component.
+     * @type {React.MutableRefObject<null>}
+     */
     this.dialogRef = React.createRef();
   }
 
   componentDidMount() {
-    this.fetchUndergraduateDegrees(this.state.currentPage);
-    this.fetchGraduateDegrees();
+    this.fetchDegrees();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.currentPage !== this.state.currentPage) {
-      this.fetchUndergraduateDegrees(this.state.currentPage);
-    }
-  }
-
-  fetchUndergraduateDegrees = async () => {
+  /**
+   * Fetches undergraduate and graduate degrees data from the API.
+   * @async
+   */
+  fetchDegrees = async () => {
     try {
-      const response = await axios.get(
-        `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/undergraduate`
-      );
-      const data = response.data;
-      const first5UndergraduateDegrees = data.undergraduate.slice(0, 5);
+      const [undergraduateResponse, graduateResponse] = await Promise.all([
+        axios.get(`https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/undergraduate`),
+        axios.get(`https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/graduate`)
+      ]);
+      const undergraduateData = undergraduateResponse.data;
+      const graduateData = graduateResponse.data;
+
+      const first5UndergraduateDegrees = undergraduateData.undergraduate.slice(0, 3);
+      const graduateDegrees = graduateData.graduate.filter(degree => degree.degreeName !== 'graduate advanced certificates');
+
+      const certificates = graduateData.graduate.find(degree => degree.degreeName === 'graduate advanced certificates');
+      if (certificates) {
+        graduateDegrees.push(certificates);
+      }
+
       this.setState({
         undergraduateDegrees: first5UndergraduateDegrees,
-        totalPages: data.total_pages,
+        graduateDegrees: graduateDegrees,
         loadingDegrees: false,
       });
     } catch (error) {
-      console.error("Error fetching undergraduate degrees:", error);
+      console.error("Error fetching degrees:", error);
       this.setState({ loadingDegrees: false });
     }
   };
 
-  fetchGraduateDegrees = async () => {
-    try {
-      const response = await axios.get(
-        `https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/degrees/graduate`
-      );
-      const data = response.data;
-      const first3GraduateDegrees = data.graduate.slice(0, 3);
-      this.setState({
-        graduateDegrees: first3GraduateDegrees,
-        loadingDegrees: false,
-      });
-    } catch (error) {
-      console.error("Error fetching graduate degrees:", error);
-      this.setState({ loadingDegrees: false });
-    }
-  };
-
-  handlePageChange = (newPage) => {
-    this.setState({ currentPage: newPage });
-  };
-
+  /**
+   * Handles the action when clicking the "Learn More" button.
+   * @param {object} degree - The degree object.
+   */
   handleReadFull = (degree) => {
     this.setState({ selectedDegree: degree, dialogOpen: true });
   };
 
+  /**
+   * Closes the dialog.
+   */
   handleClose = () => {
     this.setState({ selectedDegree: null, dialogOpen: false });
   };
 
+  /**
+   * Handles the action when clicking the funny button.
+   */
+  handleFunny = () => {
+    window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+  };
+
   render() {
     const { undergraduateDegrees, graduateDegrees, loadingDegrees, selectedDegree, dialogOpen } = this.state;
-
     return (
-      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ flexGrow: 1 }}>
+      <Grid container spacing={2} columns={{ xs: 12, sm: 12, md: 12 }} sx={{ flexGrow: 1 }} >
         {loadingDegrees ? (
           <Grid item xs={12}>
             <div>
@@ -125,49 +141,79 @@ export default class Degrees extends React.Component {
           </Grid>
         ) : (
           <>
-            <Grid item xs={12} sx={{ textAlign: 'center', backgroundColor: '#ffffff', padding: '20px' }}>
-              <Typography variant="h4" color="black" fontWeight="bold">Degrees</Typography>
-              
+            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+              <Typography variant="h6" color="black" fontWeight="bold">Undergraduate Degrees</Typography>
             </Grid>
-
-            
             {undergraduateDegrees.map((degree, index) => (
-              <Grid item xs={2} sm={4} md={4} key={index}>
-                <Card>
+              <Grid item xs={4} sm={4} md={4} lg={12} key={index} sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Card sx={{ maxWidth: 600, margin: 'auto', height: '100%' }}>
                   <LimitedCardContent>
-                    <Typography variant="h6" component="div">
+                    <Typography variant="h6" sx={{
+                      fontSize: '0.95rem',
+                    }} component="div">
                       {degree.title}
                     </Typography>
-                    <SmallTypography variant="body2" color="text.secondary">
+                    <SmallTypography variant="body2" color="text.secondary" sx={{
+                      fontSize: '0.95rem',
+                    }}>
                       {degree.description}
                     </SmallTypography>
                   </LimitedCardContent>
                   <CardActions>
-                    <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                    <Button size="small" sx={{
+                      minWidth: 0,
+                      padding: '0px 0px',
+                      fontSize: '0.65rem',
+                    }} onClick={() => this.handleReadFull(degree)}>Learn More</Button>
                   </CardActions>
                 </Card>
               </Grid>
             ))}
 
+            < Grid item xs={12} sx={{ textAlign: 'center' }}>
+              <Typography variant="h6" color="black" fontWeight="bold">Graduate Degrees</Typography>
+            </Grid>
             {graduateDegrees.map((degree, index) => (
-              <Grid item xs={2} sm={4} md={4} key={index}>
-                <Card>
+              <Grid item xs={3} sm={6} md={6} lg={6} key={index} sx={{}}>
+                <Card sx={{ maxWidth: 600, margin: 'auto', maxHeight: '100%', overflow: 'auto' }}>
                   <LimitedCardContent>
-                    <Typography variant="h6" component="div">
+                    <Typography variant="h6" sx={{
+                      fontSize: '0.65rem',
+                    }} component="div">
                       {degree.title}
                     </Typography>
-                    <SmallTypography variant="body2" color="text.secondary">
+                    <SmallTypography variant="body2" color="text.secondary" >
                       {degree.description}
                     </SmallTypography>
+                    {degree.degreeName === "graduate advanced certificates" && (
+                      <>
+                        <Typography variant="h6" sx={{
+                          fontSize: '0.65rem',
+                        }} component="div">
+                          Available Certificates:
+                        </Typography>
+                        {degree.availableCertificates.map((certificate, idx) => (
+                          <Typography key={idx} variant="body2" color="text.secondary" sx={{ fontSize: '0.5rem' }}>
+                            {certificate}
+                          </Typography>
+                        ))}
+                      </>
+                    )}
                   </LimitedCardContent>
                   <CardActions>
-                    <Button size="small" onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                    {degree.degreeName !== "graduate advanced certificates" && ( // Exclude certificates
+                      <Button size="small" sx={{ minWidth: 0, padding: '0px 0px', fontSize: '0.65rem' }} onClick={() => this.handleReadFull(degree)}>Learn More</Button>
+                    )}
+                    {degree.degreeName === "graduate advanced certificates" && ( // For certificates
+                      <Button size="small" sx={{ minWidth: 0, padding: '0px 0px', fontSize: '0.65rem' }} onClick={this.handleFunny}>Click me!</Button>
+                    )}
                   </CardActions>
                 </Card>
               </Grid>
             ))}
           </>
-        )}
+        )
+        }
 
         <BootstrapDialog
           onClose={this.handleClose}
@@ -188,8 +234,7 @@ export default class Degrees extends React.Component {
             </Button>
           </DialogActions>
         </BootstrapDialog>
-      </Grid>
+      </Grid >
     );
   }
 }
-

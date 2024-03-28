@@ -68,7 +68,7 @@ nav {
 }
 
 .nav-links a:hover {
-  color: #000000;
+  color: #F76902;
   transform-origin: left;
   transition: color 0.3s ease-in-out;
 }
@@ -131,6 +131,10 @@ body.nav-open {
 
   .burger {
     display: block;
+  }
+
+  .nav-links a:hover {
+    color: #000000;
   }
 }
 

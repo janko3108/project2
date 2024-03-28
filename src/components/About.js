@@ -5,12 +5,38 @@ import gearsLoading from "./gears.gif";
 import axios from "axios";
 import "./About.css";
 
+/**
+ * Functional component representing the About section of the application.
+ * @returns {JSX.Element} JSX element representing the About section.
+ */
 const About = () => {
+  /**
+   * State variable to store information about the about section.
+   * @type {[object, Function]} about - A tuple containing the about data object and its setter function.
+   */
   const [about, setAbout] = useState({});
+
+  /**
+   * State variable to track whether the about section is loaded.
+   * @type {[boolean, Function]} loaded - A tuple containing the loading state and its setter function.
+   */
   const [loaded, setLoaded] = useState(false);
+
+  /**
+   * State variable to track whether the animation is complete.
+   * @type {[boolean, Function]} animationComplete - A tuple containing the animation state and its setter function.
+   */
   const [animationComplete, setAnimationComplete] = useState(false);
+
+  /**
+   * Reference to the about box element.
+   * @type {React.MutableRefObject<null>}
+   */
   const aboutBoxRef = useRef(null);
 
+  /**
+   * Effect hook to fetch data from the API and update state.
+   */
   useEffect(() => {
     axios
       .get("https://people.rit.edu/~dsbics/proxy/https://ischool.gccis.rit.edu/api/about")
@@ -20,6 +46,9 @@ const About = () => {
       });
   }, []);
 
+  /**
+   * Effect hook to observe the about box for intersection and toggle classes.
+   */
   useEffect(() => {
     const options = {
       root: null,
@@ -44,6 +73,9 @@ const About = () => {
     };
   }, []);
 
+  /**
+   * Handler function called when the animation ends.
+   */
   const handleAnimationEnd = () => {
     setAnimationComplete(true);
   };
