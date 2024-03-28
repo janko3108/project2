@@ -2,26 +2,24 @@ import React, { Component } from 'react';
 import './ProgressBar.css';
 
 /**
- * ProgressBar component representing a scroll progress bar.
- * @component
+ * ProgressBar component displays a progress bar indicating the scroll progress of the page.
  */
 export default class ProgressBar extends Component {
-  /**
-   * Initializes the scroll progress state and adds scroll event listener.
-   */
+  state = {
+    scrollProgress: 0
+  };
+
   componentDidMount() {
     window.addEventListener('scroll', this.handleScroll);
   }
 
-  /**
-   * Removes scroll event listener on component unmount.
-   */
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
   }
 
   /**
-   * Updates the scroll progress state based on the scroll position.
+   * Event handler for the scroll event.
+   * Calculates the scroll progress and updates the state.
    */
   handleScroll = () => {
     const windowHeight = window.innerHeight;
@@ -31,10 +29,6 @@ export default class ProgressBar extends Component {
     this.setState({ scrollProgress: progress });
   };
 
-  /**
-   * Renders the ProgressBar component.
-   * @returns {JSX.Element} The JSX element representing the ProgressBar component.
-   */
   render() {
     const { scrollProgress } = this.state;
     return (

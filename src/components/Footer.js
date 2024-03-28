@@ -1,3 +1,6 @@
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import React from 'react';
+import './Footer.css';
 /**
  * Footer component that displays the footer section of the webpage.
  * @component
